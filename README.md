@@ -1,4 +1,4 @@
-# Automatic Persisted Query for Magento 2
+# Automatic Persisted Queries for Magento 2
 
 Apollo-compatible automatic persisted queries, to improve GraphQL network performance.
 
