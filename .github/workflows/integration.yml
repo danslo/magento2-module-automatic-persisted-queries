@@ -3,7 +3,7 @@ on: [push]
 
 jobs:
   integration-tests:
-    name: Magento 2 Integration Tests
+    name: M2 Integration Tests
     runs-on: ubuntu-latest
     services:
       mysql:
