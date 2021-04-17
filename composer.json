@@ -1,5 +1,5 @@
 {
-    "name": "danslo/m2-module-automatic-persisted-queries",
+    "name": "danslo/magento2-module-automatic-persisted-queries",
     "description": "Apollo-compatible automatic persisted queries, to improve GraphQL network performance.",
     "type": "magento2-module",
     "autoload": {
