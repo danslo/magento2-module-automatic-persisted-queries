@@ -105,10 +105,9 @@ class PersistedQueryPlugin
             $data = $this->jsonSerializer->unserialize($request->getContent());
         } elseif ($request->isGet()) {
             $data = $request->getParams();
+            $data['extensions'] = isset($data['extensions']) ?
+                $this->jsonSerializer->unserialize($data['extensions']) : null;
         }
-
-        $data['extensions'] = isset($data['extensions']) ?
-            $this->jsonSerializer->unserialize($data['extensions']) : null;
 
         return $data;
     }
