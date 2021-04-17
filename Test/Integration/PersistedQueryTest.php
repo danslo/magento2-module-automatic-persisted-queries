@@ -11,7 +11,7 @@ use Magento\TestFramework\ObjectManager;
 use Magento\TestFramework\Request;
 use PHPUnit\Framework\TestCase;
 
-class NotFoundTest extends TestCase
+class PersistedQueryTest extends TestCase
 {
     private const GOD_QUERY = '{__typename}';
 
