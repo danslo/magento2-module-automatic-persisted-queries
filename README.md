@@ -1,6 +1,8 @@
 # Automatic Persisted Query for Magento 2
 
-TODO
+Apollo-compatible automatic persisted queries, to improve GraphQL network performance.
+
+Please check [Apollo documentation](https://www.apollographql.com/docs/apollo-server/performance/apq/) for more information.
 
 # License
 
