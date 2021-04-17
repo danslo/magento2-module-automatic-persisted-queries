@@ -3,7 +3,7 @@ on: [push]
 
 jobs:
   static:
-    name: M2 Coding Standard
+    name: Magento 2 Coding Standard
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
