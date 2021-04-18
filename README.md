@@ -2,6 +2,8 @@
 
 Apollo-compatible automatic persisted queries, to improve GraphQL network performance.
 
+![APQ](https://i.imgur.com/kDysTtC.png)
+
 Please check [Apollo documentation](https://www.apollographql.com/docs/apollo-server/performance/apq/) for more information.
 
 # License
