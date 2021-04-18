@@ -66,7 +66,7 @@ class PersistedQueryPlugin
         }
 
         if (hash('sha256', $data['query']) !== $persistedQueryHash) {
-            $result->setHttpResponseCode(405);
+            $result->setHttpResponseCode($request->isPost() ? 500 : 400);
             $result->setBody('provided sha does not match query');
             return $result;
         }

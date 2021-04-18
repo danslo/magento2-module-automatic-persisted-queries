@@ -69,7 +69,7 @@ class PersistedQueryTest extends TestCase
 
         $result = $this->graphqlController->dispatch($request);
 
-        $this->assertEquals(405, $result->getHttpResponseCode());
+        $this->assertEquals(400, $result->getHttpResponseCode());
         $this->assertEquals('provided sha does not match query', $result->getContent());
     }
 
@@ -82,5 +82,6 @@ class PersistedQueryTest extends TestCase
         $request = $this->createGetRequestWithPersistedQuery(self::GOD_QUERY);
         $result = $this->graphqlController->dispatch($request);
         $this->assertEquals(200, $result->getHttpResponseCode());
+        $this->assertEquals('{"data":{"__typename":"Query"}}', $result->getBody());
     }
 }
