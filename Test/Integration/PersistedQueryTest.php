@@ -84,4 +84,20 @@ class PersistedQueryTest extends TestCase
         $this->assertEquals(200, $result->getHttpResponseCode());
         $this->assertEquals('{"data":{"__typename":"Query"}}', $result->getBody());
     }
+    
+    /**
+     * @magentoDataFixture Magento/Store/_files/second_store.php
+     */
+    public function testQueryIsNotCachedAcrossStoreViews()
+    {
+        $request = $this->createGetRequestWithPersistedQuery('def');
+        $request->setHeaders(['store'=>'default']);
+        $result = $this->graphqlController->dispatch($request);
+        $this->assertEquals(400, $result->getHttpResponseCode());
+        
+        $request = $this->createGetRequestWithPersistedQuery('def');
+        $request->setHeaders(['store'=>'fixture_second_store']);
+        $result = $this->graphqlController->dispatch($request);
+        $this->assertEquals(400, $result->getHttpResponseCode());
+    }
 }
