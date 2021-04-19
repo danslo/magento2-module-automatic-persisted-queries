@@ -1,5 +1,5 @@
 name: ExtDN M2 Coding Standard
-on: [push]
+on: [push, pull_request]
 
 jobs:
   static:
