@@ -90,13 +90,7 @@ class PersistedQueryTest extends TestCase
 
     public function testResponseForHashAndQueryThatDoNotMatch()
     {
-        $request = $this->om->create(Request::class);
-        $request->setParam(
-            'extensions',
-            $this->serializer->serialize(['persistedQuery' => ['sha256Hash' => 'foobar']])
-        );
-        $request->setParam('query', self::GOD_QUERY);
-
+        $request = $this->createGetRequestWithPersistedQuery('foobar')->setParam('query', self::GOD_QUERY);
         $result = $this->graphqlController->dispatch($request);
 
         $this->assertEquals(400, $result->getHttpResponseCode());
