@@ -111,7 +111,7 @@ class PersistedQueryTest extends TestCase
         $this->assertEquals($originalResult->getBody(), $result->getBody());
     }
 
-    public function testPersistedQueryIsCached()
+    public function testQueryIsCached()
     {
         $this->dispatchGodQuery();
         $this->assertNotEquals(false, $this->cache->load($this->getGodQueryCacheKey()));
