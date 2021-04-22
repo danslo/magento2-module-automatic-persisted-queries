@@ -4,13 +4,19 @@ declare(strict_types=1);
 
 namespace Danslo\Aqp\Test\Integration;
 
+use Danslo\Apq\Model\Cache\Type\Apq;
 use Magento\Framework\App\Cache\TypeListInterface;
+use Magento\Framework\App\CacheInterface;
+use Magento\Framework\App\ResponseInterface;
 use Magento\Framework\Serialize\Serializer\Json;
 use Magento\GraphQl\Controller\GraphQl;
 use Magento\TestFramework\ObjectManager;
 use Magento\TestFramework\Request;
 use PHPUnit\Framework\TestCase;
 
+/**
+ * @magentoCache all enabled
+ */
 class PersistedQueryTest extends TestCase
 {
     private const GOD_QUERY = '{__typename}';
@@ -18,13 +24,20 @@ class PersistedQueryTest extends TestCase
     private $om;
     private $serializer;
     private $graphqlController;
+    private $cache;
 
     protected function setUp(): void
     {
         $this->om = ObjectManager::getInstance();
         $this->serializer = $this->om->create(Json::class);
         $this->graphqlController = $this->om->get(GraphQl::class);
-        $this->om->get(TypeListInterface::class)->cleanType('apq');
+        $this->cache = $this->om->get(CacheInterface::class);
+        $this->om->get(TypeListInterface::class)->cleanType(Apq::TYPE_IDENTIFIER);
+    }
+
+    private function getGodQueryCacheKey(): string
+    {
+        return Apq::TYPE_IDENTIFIER . '_' . hash('sha256', self::GOD_QUERY);
     }
 
     private function createGetRequestWithPersistedQuery(string $query): Request
@@ -42,6 +55,23 @@ class PersistedQueryTest extends TestCase
             ->setContent(
                 $this->serializer->serialize(['extensions' => ['persistedQuery' => ['sha256Hash' => $query]]])
             );
+    }
+
+    private function dispatchGodQuery(): ResponseInterface
+    {
+        $request = $this->createGetRequestWithPersistedQuery(self::GOD_QUERY);
+        $request->setParam('query', self::GOD_QUERY);
+        return $this->graphqlController->dispatch($request);
+    }
+
+    private function dispatchPersistedGodQuery(): ResponseInterface
+    {
+        return $this->graphqlController->dispatch($this->createGetRequestWithPersistedQuery(self::GOD_QUERY));
+    }
+
+    public function testCacheIsEmptyInitially()
+    {
+        $this->assertEquals(false, $this->cache->load($this->getGodQueryCacheKey()));
     }
 
     public function testNotFoundGetQueryReturnsCorrectHttpStatus()
@@ -73,15 +103,17 @@ class PersistedQueryTest extends TestCase
         $this->assertEquals('provided sha does not match query', $result->getContent());
     }
 
-    public function testQueryIsCached()
+    public function testPersistedQueryIsSameAsRegularQuery()
     {
-        $request = $this->createGetRequestWithPersistedQuery(self::GOD_QUERY);
-        $request->setParam('query', self::GOD_QUERY);
-        $this->graphqlController->dispatch($request);
+        $originalResult = $this->dispatchGodQuery();
+        $result = $this->dispatchPersistedGodQuery();
+        $this->assertEquals($originalResult->getHttpResponseCode(), $result->getHttpResponseCode());
+        $this->assertEquals($originalResult->getBody(), $result->getBody());
+    }
 
-        $request = $this->createGetRequestWithPersistedQuery(self::GOD_QUERY);
-        $result = $this->graphqlController->dispatch($request);
-        $this->assertEquals(200, $result->getHttpResponseCode());
-        $this->assertEquals('{"data":{"__typename":"Query"}}', $result->getBody());
+    public function testPersistedQueryIsCached()
+    {
+        $this->dispatchGodQuery();
+        $this->assertNotEquals(false, $this->cache->load($this->getGodQueryCacheKey()));
     }
 }
