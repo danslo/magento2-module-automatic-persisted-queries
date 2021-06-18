@@ -57,6 +57,20 @@ class PersistedQueryTest extends TestCase
             );
     }
 
+    private function createGetRequestWithoutPersistedQueryHash(string $query): Request
+    {
+        return $this->om->create(Request::class)->setParam('query', $query);
+    }
+
+    private function createPostRequestWithoutPersistedQueryHash(string $query): Request
+    {
+        return $this->om->create(Request::class)
+            ->setMethod('post')
+            ->setContent(
+                $this->serializer->serialize(['query' => $query])
+            );
+    }
+
     private function dispatchGodQuery(): ResponseInterface
     {
         $request = $this->createGetRequestWithPersistedQuery(self::GOD_QUERY);
@@ -79,6 +93,22 @@ class PersistedQueryTest extends TestCase
         $request = $this->createGetRequestWithPersistedQuery('def');
         $result = $this->graphqlController->dispatch($request);
         $this->assertEquals(400, $result->getHttpResponseCode());
+    }
+
+    public function testGetQueryWithoutHashIsCached()
+    {
+        $this->assertEquals(false, $this->cache->load($this->getGodQueryCacheKey()));
+        $request = $this->createGetRequestWithoutPersistedQueryHash(self::GOD_QUERY);
+        $result = $this->graphqlController->dispatch($request);
+        $this->assertNotEquals(false, $this->cache->load($this->getGodQueryCacheKey()));
+    }
+
+    public function testPostQueryWithoutHashIsCached()
+    {
+        $this->assertEquals(false, $this->cache->load($this->getGodQueryCacheKey()));
+        $request = $this->createPostRequestWithoutPersistedQueryHash(self::GOD_QUERY);
+        $result = $this->graphqlController->dispatch($request);
+        $this->assertNotEquals(false, $this->cache->load($this->getGodQueryCacheKey()));
     }
 
     public function testNotFoundPostQueryReturnsCorrectHttpStatus()

@@ -61,15 +61,17 @@ class PersistedQueryPlugin
 
         $persistedQueryHash = $this->getQueryHashFromRequestData($data);
 
-        if (!isset($data['query']) || $persistedQueryHash === null) {
+        if (!isset($data['query'])) {
             return $result;
         }
 
-        if (hash('sha256', $data['query']) !== $persistedQueryHash) {
+        if ($persistedQueryHash && hash('sha256', $data['query']) !== $persistedQueryHash) {
             $result->setHttpResponseCode($request->isPost() ? 500 : 400);
             $result->setBody('provided sha does not match query');
             return $result;
         }
+
+        $persistedQueryHash = hash('sha256', $data['query']);
 
         $cacheKey = $this->getCacheKeyFromQueryHash($persistedQueryHash);
         if ($this->cache->load($cacheKey) === false) {
