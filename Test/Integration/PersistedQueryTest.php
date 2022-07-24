@@ -7,6 +7,7 @@ namespace Danslo\Aqp\Test\Integration;
 use Danslo\Apq\Model\Cache\Type\Apq;
 use Magento\Framework\App\Cache\TypeListInterface;
 use Magento\Framework\App\CacheInterface;
+use Magento\Framework\App\ProductMetadataInterface;
 use Magento\Framework\App\ResponseInterface;
 use Magento\Framework\Serialize\Serializer\Json;
 use Magento\GraphQl\Controller\GraphQl;
@@ -33,6 +34,26 @@ class PersistedQueryTest extends TestCase
         $this->graphqlController = $this->om->get(GraphQl::class);
         $this->cache = $this->om->get(CacheInterface::class);
         $this->om->get(TypeListInterface::class)->cleanType(Apq::TYPE_IDENTIFIER);
+        $this->handleRegisterFormKeyPlugin();
+    }
+
+    /**
+     * There is a RegisterFormKeyFromCookie plugin on the GraphQL controller.
+     * This plugin has a constructor dependency that will trigger a session write in versions 2.3.x.
+     * We want to avoid this because it causes a FileSystemException during integration test execution.
+     *
+     * Please see https://github.com/extdn/github-actions-m2/issues/56.
+     */
+    private function handleRegisterFormKeyPlugin(): void
+    {
+        $productMetadata = $this->om->get(ProductMetadataInterface::class);
+        if (version_compare($productMetadata->getVersion(), '2.3', '>=') &&
+            version_compare($productMetadata->getVersion(), '2.4', '<')) {
+            $this->om->addSharedInstance(
+                new class { public function beforeDispatch() {}},
+                \Magento\PageCache\Plugin\RegisterFormKeyFromCookie::class
+            );
+        }
     }
 
     private function getGodQueryCacheKey(): string
