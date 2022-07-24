@@ -50,7 +50,11 @@ class PersistedQueryTest extends TestCase
         if (version_compare($productMetadata->getVersion(), '2.3', '>=') &&
             version_compare($productMetadata->getVersion(), '2.4', '<')) {
             $this->om->addSharedInstance(
-                new class { public function beforeDispatch() {}},
+                new class {
+                    public function beforeDispatch()
+                    {
+                    }
+                },
                 \Magento\PageCache\Plugin\RegisterFormKeyFromCookie::class
             );
         }
