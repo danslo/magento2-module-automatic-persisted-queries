@@ -20,7 +20,7 @@ use PHPUnit\Framework\TestCase;
  */
 class PersistedQueryTest extends TestCase
 {
-    private const GOD_QUERY = '{__typename}';
+    private const SIMPLE_QUERY = '{__typename}';
 
     private $om;
     private $serializer;
@@ -60,9 +60,9 @@ class PersistedQueryTest extends TestCase
         }
     }
 
-    private function getGodQueryCacheKey(): string
+    private function getSimpleQueryCacheKey(): string
     {
-        return Apq::TYPE_IDENTIFIER . '_' . hash('sha256', self::GOD_QUERY);
+        return Apq::TYPE_IDENTIFIER . '_' . hash('sha256', self::SIMPLE_QUERY);
     }
 
     private function createGetRequestWithPersistedQuery(string $query): Request
@@ -96,21 +96,21 @@ class PersistedQueryTest extends TestCase
             );
     }
 
-    private function dispatchGodQuery(): ResponseInterface
+    private function dispatchSimpleQuery(): ResponseInterface
     {
-        $request = $this->createGetRequestWithPersistedQuery(self::GOD_QUERY);
-        $request->setParam('query', self::GOD_QUERY);
+        $request = $this->createGetRequestWithPersistedQuery(self::SIMPLE_QUERY);
+        $request->setParam('query', self::SIMPLE_QUERY);
         return $this->graphqlController->dispatch($request);
     }
 
-    private function dispatchPersistedGodQuery(): ResponseInterface
+    private function dispatchPersistedSimpleQuery(): ResponseInterface
     {
-        return $this->graphqlController->dispatch($this->createGetRequestWithPersistedQuery(self::GOD_QUERY));
+        return $this->graphqlController->dispatch($this->createGetRequestWithPersistedQuery(self::SIMPLE_QUERY));
     }
 
     public function testCacheIsEmptyInitially()
     {
-        $this->assertEquals(false, $this->cache->load($this->getGodQueryCacheKey()));
+        $this->assertEquals(false, $this->cache->load($this->getSimpleQueryCacheKey()));
     }
 
     public function testNotFoundGetQueryReturnsCorrectHttpStatus()
@@ -122,18 +122,18 @@ class PersistedQueryTest extends TestCase
 
     public function testGetQueryWithoutHashIsCached()
     {
-        $this->assertEquals(false, $this->cache->load($this->getGodQueryCacheKey()));
-        $request = $this->createGetRequestWithoutPersistedQueryHash(self::GOD_QUERY);
+        $this->assertEquals(false, $this->cache->load($this->getSimpleQueryCacheKey()));
+        $request = $this->createGetRequestWithoutPersistedQueryHash(self::SIMPLE_QUERY);
         $result = $this->graphqlController->dispatch($request);
-        $this->assertNotEquals(false, $this->cache->load($this->getGodQueryCacheKey()));
+        $this->assertNotEquals(false, $this->cache->load($this->getSimpleQueryCacheKey()));
     }
 
     public function testPostQueryWithoutHashIsCached()
     {
-        $this->assertEquals(false, $this->cache->load($this->getGodQueryCacheKey()));
-        $request = $this->createPostRequestWithoutPersistedQueryHash(self::GOD_QUERY);
+        $this->assertEquals(false, $this->cache->load($this->getSimpleQueryCacheKey()));
+        $request = $this->createPostRequestWithoutPersistedQueryHash(self::SIMPLE_QUERY);
         $result = $this->graphqlController->dispatch($request);
-        $this->assertNotEquals(false, $this->cache->load($this->getGodQueryCacheKey()));
+        $this->assertNotEquals(false, $this->cache->load($this->getSimpleQueryCacheKey()));
     }
 
     public function testNotFoundPostQueryReturnsCorrectHttpStatus()
@@ -145,7 +145,7 @@ class PersistedQueryTest extends TestCase
 
     public function testResponseForHashAndQueryThatDoNotMatch()
     {
-        $request = $this->createGetRequestWithPersistedQuery('foobar')->setParam('query', self::GOD_QUERY);
+        $request = $this->createGetRequestWithPersistedQuery('foobar')->setParam('query', self::SIMPLE_QUERY);
         $result = $this->graphqlController->dispatch($request);
 
         $this->assertEquals(400, $result->getHttpResponseCode());
@@ -154,15 +154,15 @@ class PersistedQueryTest extends TestCase
 
     public function testPersistedQueryIsSameAsRegularQuery()
     {
-        $originalResult = $this->dispatchGodQuery();
-        $result = $this->dispatchPersistedGodQuery();
+        $originalResult = $this->dispatchSimpleQuery();
+        $result = $this->dispatchPersistedSimpleQuery();
         $this->assertEquals($originalResult->getHttpResponseCode(), $result->getHttpResponseCode());
         $this->assertEquals($originalResult->getBody(), $result->getBody());
     }
 
     public function testQueryIsCached()
     {
-        $this->dispatchGodQuery();
-        $this->assertNotEquals(false, $this->cache->load($this->getGodQueryCacheKey()));
+        $this->dispatchSimpleQuery();
+        $this->assertNotEquals(false, $this->cache->load($this->getSimpleQueryCacheKey()));
     }
 }
