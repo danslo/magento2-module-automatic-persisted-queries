@@ -31,5 +31,3 @@ jobs:
       package_name: danslo/magento2-module-automatic-persisted-queries
       matrix: ${{ needs.compute_matrix.outputs.matrix }}
       test_command: ../../../vendor/bin/phpunit ../../../vendor/danslo/magento2-module-automatic-persisted-queries/Test/Integration
-    secrets:
-      composer_auth: ${{ secrets.COMPOSER_AUTH }}
