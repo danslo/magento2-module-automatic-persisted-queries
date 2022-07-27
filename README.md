@@ -1,5 +1,11 @@
 # Automatic Persisted Queries for Magento 2
 
+[![Packagist Downloads](https://img.shields.io/packagist/dm/danslo/magento2-module-automatic-persisted-queries?color=blue)](https://packagist.org/packages/danslo/magento2-module-automatic-persisted-queries/stats)
+[![Packagist Version](https://img.shields.io/packagist/v/danslo/magento2-module-automatic-persisted-queries?color=blue)](https://packagist.org/packages/danslo/magento2-module-automatic-persisted-queries)
+[![Packagist License](https://img.shields.io/packagist/l/danslo/magento2-module-automatic-persisted-queries)](https://github.com/danslo/magento2-module-automatic-persisted-queries/blob/main/LICENSE)
+[![Integration Test](https://github.com/danslo/magento2-module-automatic-persisted-queries/actions/workflows/integration.yml/badge.svg)](https://github.com/danslo/magento2-module-automatic-persisted-queries/actions/workflows/integration.yml)
+[![Coding Standard](https://github.com/danslo/magento2-module-automatic-persisted-queries/actions/workflows/coding-standard.yml/badge.svg)](https://github.com/danslo/magento2-module-automatic-persisted-queries/actions/workflows/coding-standard.yml)
+
 Apollo-compatible automatic persisted queries, to improve GraphQL network performance.
 
 ![APQ](https://i.imgur.com/kDysTtC.png)
