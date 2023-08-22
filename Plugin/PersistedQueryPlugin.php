@@ -10,22 +10,27 @@ use Magento\Framework\App\RequestInterface;
 use Magento\Framework\App\ResponseInterface;
 use Magento\Framework\Serialize\Serializer\Json;
 use Magento\GraphQl\Controller\GraphQl;
+use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\App\Response\Http as HttpResponse;
 use Magento\Framework\Controller\Result\JsonFactory;
+use Magento\Store\Model\ScopeInterface;
 
 class PersistedQueryPlugin
 {
+    private $scopeConfig;
     private $jsonSerializer;
     private $cache;
     private $httpResponse;
     private $jsonFactory;
 
     public function __construct(
+        ScopeConfigInterface $scopeConfig,
         Json $jsonSerializer,
         CacheInterface $cache,
         HttpResponse $httpResponse,
         JsonFactory $jsonFactory
     ) {
+        $this->scopeConfig = $scopeConfig;
         $this->jsonSerializer = $jsonSerializer;
         $this->cache = $cache;
         $this->httpResponse = $httpResponse;
@@ -66,7 +71,10 @@ class PersistedQueryPlugin
         }
 
         if ($persistedQueryHash && hash('sha256', $data['query']) !== $persistedQueryHash) {
-            $result->setHttpResponseCode($request->isPost() ? 500 : 400);
+            $result->setHttpResponseCode($request->isPost()
+                ? $this->scopeConfig->getValue('apq/general/invalid_sha_http_code_post', ScopeInterface::SCOPE_STORES) ?? 500
+                : $this->scopeConfig->getValue('apq/general/invalid_sha_http_code_get', ScopeInterface::SCOPE_STORES) ?? 400
+            );
             $result->setBody('provided sha does not match query');
             return $result;
         }
@@ -86,7 +94,10 @@ class PersistedQueryPlugin
         $jsonResult = $this->jsonFactory->create();
 
         // apollo-server responds with 400 for GET and 500 for POST when no query is found
-        $jsonResult->setHttpResponseCode($request->isPost() ? 500 : 400);
+        $jsonResult->setHttpResponseCode($request->isPost()
+            ? $this->scopeConfig->getValue('apq/general/query_not_found_http_code_post', ScopeInterface::SCOPE_STORES) ?? 500
+            : $this->scopeConfig->getValue('apq/general/query_not_found_http_code_get', ScopeInterface::SCOPE_STORES) ?? 400
+        );
         $jsonResult->setData([
             'errors' => [
                 [

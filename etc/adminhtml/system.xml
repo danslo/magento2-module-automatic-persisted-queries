@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_file.xsd">
+    <system>
+        <section id="apq" translate="label" type="text" sortOrder="9000" showInDefault="1" showInWebsite="1" showInStore="1">
+            <label>Automatic Persisted Queries</label>
+            <tab>general</tab>
+            <resource>Danslo_Apq::config_apq</resource>
+            <group id="general" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>General</label>
+                <field id="query_not_found_http_code_get" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>HTTP Return code on query not found (GET)</label>
+                    <comment>Default is 400</comment>
+                </field>
+                <field id="query_not_found_http_code_post" translate="label" type="text" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>HTTP Return code on query not found (POST)</label>
+                    <comment>Default is 500</comment>
+                </field>
+
+                <field id="invalid_sha_http_code_get" translate="label" type="text" sortOrder="110" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>HTTP Return code on invalid SHA (GET)</label>
+                    <comment>Default is 400</comment>
+                </field>
+                <field id="invalid_sha_http_code_post" translate="label" type="text" sortOrder="120" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>HTTP Return code on invalid SHA (POST)</label>
+                    <comment>Default is 500</comment>
+                </field>
+            </group>
+        </section>
+    </system>
+</config>
