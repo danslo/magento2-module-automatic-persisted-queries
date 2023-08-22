@@ -1,0 +1,12 @@
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Store:etc/config.xsd">
+    <default>
+        <apq>
+            <general>
+                <query_not_found_http_code_get>400</query_not_found_http_code_get>
+                <query_not_found_http_code_post>500</query_not_found_http_code_post>
+                <invalid_sha_http_code_get>400</invalid_sha_http_code_get>
+                <invalid_sha_http_code_post>500</invalid_sha_http_code_post>
+            </general>
+        </apq>
+    </default>
+</config>
